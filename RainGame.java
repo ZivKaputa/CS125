@@ -11,30 +11,86 @@ public class RainGame {
 		// REMEMBER TO COMMIT this file...
 	
 		int x=0, y=0, dx=0, dy=0, score = 0;
-		String text = "";
+		
+		String originalText= ""; //original text
+		String currentText = ""; //current text
+		String typed = ""; //the portion of the text already typed
+		
+		Bobber colorBobber = new Bobber();
+		colorBobber.currentValue = 130;
+		colorBobber.increment = 2;
+		colorBobber.lowerValue = 120;
+		colorBobber.upperValue = 180;
+		
+		
+		//CHANGED
+		int level = 1;
 		long startTime =System.currentTimeMillis();
 		
-		Zen.setFont("Helvetica-64");
+		//CHANGED
+		boolean started = false;
+		int successesUntilNextLevel=2;
+		boolean success=false;
+		long elapsed;
+		
+		Zen.setFont("Arial-40");
 		while (Zen.isRunning()) {
 
-			if (text.length() == 0) {
+		
+			colorBobber.fire();
+			System.out.println(colorBobber.currentValue);
+			
+			
+			
+			//Check if the user has finished typing the number
+			if (currentText.length() == 0) {
+				success=true;
 				x = 0;
 				y = Zen.getZenHeight() / 2;
 				dx = 2;
 				dy = 0;
-				text = "" + (int) (Math.random() * 999);
-				long elapsed = System.currentTimeMillis() - startTime;
+				currentText = "" + (int) (Math.random() * 999);
+				originalText = ""+currentText;
+				typed = "";
+				elapsed = System.currentTimeMillis() - startTime;
 				startTime = System.currentTimeMillis();
-				score += 3000 / elapsed;
+				if (started) score += 3000 / elapsed;
+				successesUntilNextLevel--;
+				
 			}
-			Zen.setColor(255, 0, 255);
-			Zen.fillRect(0, 0, Zen.getZenWidth(), Zen.getZenHeight());
-
-			Zen.setColor(0, 255, 0);
-			Zen.drawText(text, x, y);
 			
-			Zen.drawText("Level: 0",10,30);
+			
+			
+			
+			if (successesUntilNextLevel==0){
+				successesUntilNextLevel=2;
+				level+=1;
+			}
+			
+			
+			
+			
+			started = true;
+			Zen.setColor(255, colorBobber.currentValue, 255);
+			Zen.fillRect(0, 0, Zen.getZenWidth(), Zen.getZenHeight());
+			
+			Zen.setColor(255,255,colorBobber.currentValue);
+			Zen.fillRect(0,0,Zen.getZenWidth(),80);
+			//Do ALL foregorund drawing after this point
+			
+			Zen.fillOval(x-20,y-40,colorBobber.currentValue,colorBobber.currentValue);
+			
+			Zen.setColor(0, 255-x, 0);
+			if (success){
+				Zen.drawText("+2"+level,x,200);
+			}
+			Zen.drawText(originalText, x, y);
+			Zen.setColor(255, 0, 0);
+			Zen.drawText(typed, x, y);
+			
+			Zen.drawText("Level: "+level,200,60);
 			Zen.drawText("Score: "+score,10,60);
+			Zen.flipBuffer();
 			
 			x += dx;
 			y += dy;
@@ -47,13 +103,19 @@ public class RainGame {
 			
 			for(int i=0;i < user.length();i++) {
 				char c = user.charAt(i);
-				if(c == text.charAt(0))
-					text = text.substring(1,text.length()); // all except first character
+				if(c == currentText.charAt(0)){
+					currentText = currentText.substring(1,currentText.length()); // all except first character
+					typed = typed + c;
+				}
+				if(c == ' '){
+					level ++;
+				}
 			}
 			
-			Zen.sleep(90);// sleep for 90 milliseconds
+			Zen.sleep(90/level);// sleep for 90 milliseconds
 
 		}
 	}
 
 }
+
