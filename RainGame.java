@@ -2,7 +2,7 @@ import java.awt.Graphics2D;
 
 /**
  * @author zkaputa2,jwrogge2
- * @reviewed tjgrant2, exue3, denisbp2
+ * @reviewed tjgrant2, exue3, denisbp2, sahilb2
  */
 public class RainGame {
 
